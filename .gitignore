@@ -1,7 +1,11 @@
 *.o
 *.dot
 *.output
+lex.yy.c
 miniL
+parser
+y.tab.c
+y.tab.h
 miniL-lex.c
 miniL-parser.c
 miniL-parser.h
