@@ -2,8 +2,9 @@
    
 %{   
    /* write your C code here for definitions of variables and including headers */
-   #include y.tab.h
+#include "y.tab.h"
    int currLine = 1, currPos = 1;
+
 %}
 
    /* some common rules */
@@ -67,8 +68,8 @@ return	            {currPos += yyleng; return RETURN;}
 
 
           /*    IDENTIFIERS AND NUMBERS    */
-{ID}+                 {currPos += yyleng; yylval.strVal = yytext; return IDENT;}
-{DIGIT}+             {currPos += yyleng; yyval.iVal = atoi(yytext) return NUMBER;}
+{ID}+                 {currPos += yyleng; yylval.strVal = strdup(yytext); return IDENT;}
+{DIGIT}+             {currPos += yyleng; yylval.iVal = atoi(yytext); return NUMBER;}
 
 
          /*    OTHER SPECIAL SYMBOLS    */
