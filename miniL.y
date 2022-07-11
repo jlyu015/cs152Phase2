@@ -54,14 +54,14 @@ function: FUNCTION IDENT SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGIN_LO
 declarations: /*epsilon*/ {printf("declarations -> epsilon\n");} 
             | declaration SEMICOLON declarations {printf("declarations -> declaration SEMICOLON declarations\n");}
  ;
-
+ 
 declaration: idents_plus COLON INTEGER {printf("declaration -> idents_plus COLON INTEGER\n");}
-	          | idents_plus COLON ENUM L_PAREN idents_plus R_PAREN {printf("declaration -> idents_plus COLON ENUM R_PAREN idents_plus L_PAREN\n");}
-	          | idents_plus COLON ARRAY L_SQUARE_BRACKET NUMBER R_SQUARE_BRACKET OF INTEGER {printf("declaration -> idents_plus COLON ARRAY R_SQUARE_BRACKET %d L_SQUARE_BRACKET OF INTEGER\n", $5);}
+	          | idents_plus COLON ENUM L_PAREN idents_plus R_PAREN {printf("declaration -> idents_plus COLON ENUM L_PAREN idents_plus R_PAREN\n");}
+	          | idents_plus COLON ARRAY L_SQUARE_BRACKET NUMBER R_SQUARE_BRACKET OF INTEGER {printf("declaration -> idents_plus COLON ARRAY L_SQUARE_BRACKET %d R_SQUARE_BRACKET OF INTEGER\n", $5);}
 ;
 
 idents_plus: IDENT {printf("ident_plus -> IDENT %s\n"), $1;}
-            | idents_plus COMMA IDENT {printf("ident_plus -> ident_plus COMMA IDENT %s\n", $3);}
+            | IDENT COMMA idents_plus {printf("ident_plus -> IDENT %s COMMA idents_plus \n", $1);}
 ;
 statements_plus:  statement SEMICOLON {printf("statement_plus -> statement SEMICOLON\n");}
                 | statement SEMICOLON statements_plus {printf("statement_plus -> statement SEMICOLON statements_plus\n");}
@@ -70,7 +70,7 @@ statement: var ASSIGN expression {printf("statement -> var ASSIGN expression\n")
          | IF bool_expr THEN statements_plus ENDIF {printf("statement -> IF bool_expr THEN statements_plus ENDIF\n");}
          | IF bool_expr THEN statements_plus ELSE statements_plus ENDIF {printf("statement -> IF bool_expr THEN statements_plus ELSE statements_plus ENDIF\n");}
 	      | WHILE bool_expr BEGINLOOP statements_plus ENDLOOP {printf("statement -> WHILE bool_expr BEGINLOOP statements_plus ENDLOOP\n");}
-	      | DO BEGINLOOP statements_plus ENDLOOP {printf("statement -> DO BEGINLOOP statements_plus ENDLOOP\n");}
+	      | DO BEGINLOOP statements_plus ENDLOOP WHILE bool_expr {printf("statement -> DO BEGINLOOP statements_plus ENDLOOP\n");}
 	      | FOR vars_plus ASSIGN NUMBER SEMICOLON bool_expr SEMICOLON vars_plus ASSIGN expression BEGINLOOP statements_plus ENDLOOP {printf("statement -> FOR vars_plus ASSIGN %d SEMICOLON bool_expr SEMICOLON vars_plus ASSIGN expression BEGINLOOP statements_plus ENDLOOP\n", $4);}
 	      | READ vars_plus {printf("statement -> READ vars_plus\n");}
       	| WRITE vars_plus {printf("statement -> WRITE vars_plus\n");}
@@ -78,8 +78,8 @@ statement: var ASSIGN expression {printf("statement -> var ASSIGN expression\n")
       	| RETURN expression {printf("statement -> RETURN expression\n");}
 ;
 
-var: IDENT {printf("IDNET %s\n", $1);}
-   | IDENT L_SQUARE_BRACKET expression R_SQUARE_BRACKET {printf("IDNET %s R_SQUARE_BRACKET expression L_SQUARE_BRACKET\n", $1);}
+var: IDENT {printf("var -> IDNET %s\n", $1);}
+   | IDENT L_SQUARE_BRACKET expression R_SQUARE_BRACKET {printf("var -> IDNET %s R_SQUARE_BRACKET expression L_SQUARE_BRACKET\n", $1);}
 ;
 
 expression: mult_expr {printf("expression -> mult_expr\n");}
@@ -93,6 +93,7 @@ bool_expr: relation_and_expr {printf("bool_expr -> relation_and_expr\n");}
 ;
 
 vars_plus: var COMMA vars_plus {printf("vars_plus -> var COMMA vars_plus\n");}
+         | var {printf("vars_plus -> var\n");}
 ;
 
 mult_expr: term {printf("mult_expr -> term\n");}
@@ -112,12 +113,11 @@ term: var {printf("term -> var\n");}
 	 | NUMBER {printf("term -> NUMBER %d\n", $1);}
 	 | SUB NUMBER {printf("term -> SUB NUMBER %d\n", $2);}
 	 | L_PAREN expression R_PAREN {printf("term -> L_PAREN expression R_PAREN\n");}
-	 | SUB var {printf("term -> SUB var\n");}
     | IDENT L_PAREN expression R_PAREN {printf("term -> IDENT %s L_PAREN expression R_PAREN\n", $1);}
     | IDENT L_PAREN R_PAREN {printf("term -> IDENT %s L_PAREN R_PAREN\n", $1);}
 ;
 
-relation_expr: expression comp expression {printf("relation_expr -> \n");}
+relation_expr: expression comp expression {printf("relation_expr -> expression comp expression\n");}
 		       | NOT expression comp expression {printf("relation_expr -> NOT expression comp expression\n");}
 		       | TRUE {printf("relation_expr -> TRUE\n");}
       		 | NOT TRUE {printf("relation_expr -> NOT TRUE\n");}
@@ -135,7 +135,7 @@ comp: EQ {printf("comp -> EQ\n");}
 	 | GTE {printf("comp -> GTE\n");}
 ;
 
-
+ 
 %% 
 
 int main(int argc, char ** argv)
