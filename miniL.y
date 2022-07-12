@@ -45,11 +45,11 @@ functions: /*epsilon*/ {printf("functions -> epsilon\n");}
          | function functions {printf("functions -> function functions\n");}
          ;
 
-function: FUNCTION IDENT SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGIN_LOCALS declarations END_LOCALS BEGIN_BODY statements_plus END_BODY {printf("function -> FUNCTION IDENT %s SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGIN_LOCALS declarations END_LOCALS BEGIN_BODY statements_plus END_BODY/n", $2);}
+function: FUNCTION ident SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGIN_LOCALS declarations END_LOCALS BEGIN_BODY statements_plus END_BODY {printf("function -> FUNCTION ident SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGIN_LOCALS declarations END_LOCALS BEGIN_BODY statements_plus END_BODY\n");}
       ; 
 
-/* ident: IDENT {printf("ident -> IDENT\n")}
-   ; not sure if this should be a grammar */
+ident: IDENT {printf("ident -> IDENT %s\n", $1);}
+
  
 declarations: /*epsilon*/ {printf("declarations -> epsilon\n");} 
             | declaration SEMICOLON declarations {printf("declarations -> declaration SEMICOLON declarations\n");}
@@ -60,8 +60,8 @@ declaration: idents_plus COLON INTEGER {printf("declaration -> idents_plus COLON
 	          | idents_plus COLON ARRAY L_SQUARE_BRACKET NUMBER R_SQUARE_BRACKET OF INTEGER {printf("declaration -> idents_plus COLON ARRAY L_SQUARE_BRACKET %d R_SQUARE_BRACKET OF INTEGER\n", $5);}
 ;
 
-idents_plus: IDENT {printf("ident_plus -> IDENT %s\n"), $1;}
-            | IDENT COMMA idents_plus {printf("ident_plus -> IDENT %s COMMA idents_plus \n", $1);}
+idents_plus: ident {printf("ident_plus -> ident\n");}
+            | ident COMMA idents_plus {printf("ident_plus -> ident COMMA idents_plus \n");}
 ;
 statements_plus:  statement SEMICOLON {printf("statement_plus -> statement SEMICOLON\n");}
                 | statement SEMICOLON statements_plus {printf("statement_plus -> statement SEMICOLON statements_plus\n");}
@@ -78,8 +78,8 @@ statement: var ASSIGN expression {printf("statement -> var ASSIGN expression\n")
       	| RETURN expression {printf("statement -> RETURN expression\n");}
 ;
 
-var: IDENT {printf("var -> IDNET %s\n", $1);}
-   | IDENT L_SQUARE_BRACKET expression R_SQUARE_BRACKET {printf("var -> IDNET %s R_SQUARE_BRACKET expression L_SQUARE_BRACKET\n", $1);}
+var: ident {printf("var -> ident \n");}
+   | ident L_SQUARE_BRACKET expression R_SQUARE_BRACKET {printf("var -> IDNET R_SQUARE_BRACKET expression L_SQUARE_BRACKET\n");}
 ;
 
 expression: mult_expr {printf("expression -> mult_expr\n");}
@@ -113,8 +113,8 @@ term: var {printf("term -> var\n");}
 	 | NUMBER {printf("term -> NUMBER %d\n", $1);}
 	 | SUB NUMBER {printf("term -> SUB NUMBER %d\n", $2);}
 	 | L_PAREN expression R_PAREN {printf("term -> L_PAREN expression R_PAREN\n");}
-    | IDENT L_PAREN expression R_PAREN {printf("term -> IDENT %s L_PAREN expression R_PAREN\n", $1);}
-    | IDENT L_PAREN R_PAREN {printf("term -> IDENT %s L_PAREN R_PAREN\n", $1);}
+    | ident L_PAREN expression R_PAREN {printf("term -> ident L_PAREN expression R_PAREN\n");}
+    | ident L_PAREN R_PAREN {printf("term -> ident L_PAREN R_PAREN\n");}
 ;
 
 relation_expr: expression comp expression {printf("relation_expr -> expression comp expression\n");}
